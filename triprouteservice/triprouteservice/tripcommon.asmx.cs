@@ -31,10 +31,10 @@ namespace triprouteservice
             return "Hello World";
         }
 
-        [WebMethod]
+        [WebMethod(Description = "전체 요청 목록 조회")]
         public DataSet  requestList()
         {          
-            DataTable dt = null;
+           
             using (SqlConnection con = new SqlConnection(conString))
             {
                 con.Open();
@@ -47,83 +47,98 @@ namespace triprouteservice
                     
                 using (SqlDataAdapter adapter = new SqlDataAdapter(query, con))
                 {  
-                    adapter.Fill(ds, "list");
+                    adapter.Fill(ds, "todolist");
                     return (ds);
                 }
           }          
         }
-        [WebMethod]
-        public string requestTravleRoute()
+        [WebMethod(Description = "해당 email에 대한 요청 목록 조회")] 
+        public DataSet requestListbyEmail(string _email)
         {
-            string _query = "INSERT INTO [request_list] (req_email, req_type_code, req_type_title," +
-           "  req_servicetype_code, req_servicetype_title, upload_path, req_result) values (@req_email, @req_type_code, @req_type_title," +
-           " @req_servicetype_code, @req_servicetype_title , @upload_path, @req_result)";
+            string email = checkInputData(_email);
 
-            SqlConnection conn = new SqlConnection(conString);
-            if (conn.State == ConnectionState.Open)
-                return "connected";
-            else
-                return "disconnected";
+            using (SqlConnection con = new SqlConnection(conString))
+            {
+                con.Open();
+                DataSet ds = new DataSet();
 
-            /*
-              using (SqlConnection conn = new SqlConnection(conString))
-              {
-                  if (conn.State == ConnectionState.Open)
-                      return "connected";
-                  else
-                      return "disconnected";
+                String query =  string.Format("SELECT [AutoID]  ,[RequestTime]," +
+                    "[RequestWHO_IP] ,[RequestWHO_email],[RequestWHO_name] ,[Request_Data]  ,[Output_Status]  ," +
+                    "[Output_CompletedTime]  ,[Output_Data]  ,[Output_Path],[remark] ,[Output_Route]" +
+                    "FROM[trip].[dbo].[ToDO] where requestwho_email ='{0}'", email);
 
-                  using (SqlCommand comm = new SqlCommand())
-                  {
-                      comm.Connection = conn;
-                      comm.CommandType = CommandType.Text;
-                      comm.CommandText = _query;
-                      comm.Parameters.AddWithValue("@req_email", req_email);
-                      comm.Parameters.AddWithValue("@req_type_code", req_type_code);
-                      comm.Parameters.AddWithValue("@req_type_title", req_type_title);
-                      comm.Parameters.AddWithValue("@req_servicetype_code", req_servicetype_code);
-                      comm.Parameters.AddWithValue("@req_servicetype_title", req_servicetype_title);
-                      comm.Parameters.AddWithValue("@upload_path", uploadPath);
-                      comm.Parameters.AddWithValue("@req_result", "N");
-                      try
-                      {
-                          conn.Open();
-                          comm.ExecuteNonQuery();
-                      }
-                      catch (SqlException ex)
-                      {
-                          throw ex;
-                      }
-                  }
-                  @RequestTime
-, @RequestWHO_IP
-, @RequestWHO_email
-, @RequestWHO_name
-, @Request_Data
-, @Output_Status
-, @Output_CompletedTime
-, @Output_Data
-, @Output_Path
-, @remark
-, @Output_Route
-
-            requesttime, request
-
-RequestTime
-RequestWHO_IP
-RequestWHO_email
-RequestWHO_name
-Request_Data
-Output_Status
-Output_CompletedTime
-Output_Data
-Output_Path
-remark
-Output_Route
-
-              
+                using (SqlDataAdapter adapter = new SqlDataAdapter(query, con))
+                {
+                    adapter.Fill(ds, "todolist");
+                    return (ds);
+                }
             }
-            */
+        }
+
+        [WebMethod(Description = "경로 요청 입력")]        
+        public string requestTravelRoute(string ip, string email, string name, string data)
+        {
+            string requestwho_ip = checkInputData ( ip );
+            string requestwho_email = checkInputData(email );
+            string requestwho_name = checkInputData(name);
+            string request_data = checkInputData(data);
+
+            string _query = "INSERT INTO [ToDO] ( requestwho_ip, requestwho_email, requestwho_name, request_data) " +
+            "values ( @requestwho_ip, @requestwho_email, @requestwho_name, @request_data )";
+            
+            using (SqlConnection conn = new SqlConnection(conString))
+            {
+                using (SqlCommand comm = new SqlCommand())
+                {
+                    comm.Connection = conn;
+                    comm.CommandType = CommandType.Text;
+                    comm.CommandText = _query;
+                    comm.Parameters.AddWithValue("@requestwho_ip", requestwho_ip);
+                    comm.Parameters.AddWithValue("@requestwho_email", requestwho_email);
+                    comm.Parameters.AddWithValue("@requestwho_name", requestwho_name);
+                    comm.Parameters.AddWithValue("@request_data", request_data);
+                     
+                    try
+                    {
+                        conn.Open();
+                        comm.ExecuteNonQuery();
+                        return "OK";                        
+                    }
+                    catch (SqlException ex)
+                    {
+                        // throw ex;
+                        return ex.Message; 
+                    }
+                    catch ( Exception ex)
+                    {
+                        return ex.Message;
+                    }
+                }
+            }
+        }
+        public static string checkInputData(string _inputValue)
+        {
+            _inputValue = _inputValue.Replace("'", "");
+            _inputValue = _inputValue.Replace("--", "");
+            _inputValue = _inputValue.Replace("--, #", " ");
+            _inputValue = _inputValue.Replace("/* */", " ");
+            _inputValue = _inputValue.Replace("' or 1=1--", " ");
+            _inputValue = _inputValue.Replace("union", " ");
+            _inputValue = _inputValue.Replace("select", " ");
+            _inputValue = _inputValue.Replace("delete", " ");
+            _inputValue = _inputValue.Replace("insert", " ");
+            _inputValue = _inputValue.Replace("update", " ");
+            _inputValue = _inputValue.Replace("drop", " ");
+            _inputValue = _inputValue.Replace("on error resume", " ");
+            _inputValue = _inputValue.Replace("execute", " ");
+            _inputValue = _inputValue.Replace("windows", " ");
+            _inputValue = _inputValue.Replace("boot", " ");
+            _inputValue = _inputValue.Replace("-1 or", " ");
+            _inputValue = _inputValue.Replace("-1' or", " ");
+            _inputValue = _inputValue.Replace("../", " ");
+            _inputValue = _inputValue.Replace("unexisting", " ");
+            _inputValue = _inputValue.Replace("win.ini", " ");
+            return _inputValue;
         }
     }
 }
