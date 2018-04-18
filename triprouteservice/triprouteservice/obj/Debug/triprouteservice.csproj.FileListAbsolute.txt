@@ -113,7 +113,6 @@ C:\triphome\travle_webservice\triprouteservice\triprouteservice\obj\Debug\tripro
 C:\triphome\travle_webservice\triprouteservice\triprouteservice\obj\Debug\triprouteservice.csproj.CopyComplete
 C:\triphome\travle_webservice\triprouteservice\triprouteservice\obj\Debug\triprouteservice.dll
 C:\triphome\travle_webservice\triprouteservice\triprouteservice\obj\Debug\triprouteservice.pdb
-C:\triphome\travle_webservice\triprouteservice\triprouteservice\obj\Debug\triprouteservice.csprojResolveAssemblyReference.cache
 D:\githome\travel_route\triprouteservice\triprouteservice\bin\triprouteservice.dll.config
 D:\githome\travel_route\triprouteservice\triprouteservice\bin\triprouteservice.dll
 D:\githome\travel_route\triprouteservice\triprouteservice\bin\triprouteservice.pdb
