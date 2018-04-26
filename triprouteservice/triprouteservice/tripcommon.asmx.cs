@@ -40,12 +40,12 @@ namespace triprouteservice
             {
                 con.Open();
                 DataSet ds = new DataSet();
-               
+
                 String query = "SELECT [AutoID]  ,[RequestTime]," +
-                    "[RequestWHO_IP] ,[RequestWHO_email],[RequestWHO_name],[Request_place] ,[Request_Data]  ,[Output_Status]  ," +
-                    "[Output_CompletedTime]  ,[Output_Data]  ,[Output_Path],[remark] ,[Output_Route]" +
-                    "FROM[trip].[dbo].[ToDO] " ;
-                    
+                "[RequestWHO_IP] ,[RequestWHO_email],[RequestWHO_name],[Request_place] ,[Request_Data]  ,[IsFix], [Output_Status]  ," +
+                "[Output_CompletedTime]  ,[Output_Data]  ,[Output_Path],[remark] ,[Output_Route]" +
+                "FROM[trip].[dbo].[ToDO] ";
+
                 using (SqlDataAdapter adapter = new SqlDataAdapter(query, con))
                 {  
                     adapter.Fill(ds, "todolist");
@@ -63,10 +63,11 @@ namespace triprouteservice
                 con.Open();
                 DataSet ds = new DataSet();
 
-                String query =  string.Format("SELECT [AutoID]  ,[RequestTime]," +
-                    "[RequestWHO_IP] ,[RequestWHO_email],[RequestWHO_name] ,[Request_place] ,[Request_Data]  ,[Output_Status]  ," +
-                    "[Output_CompletedTime]  ,[Output_Data]  ,[Output_Path],[remark] ,[Output_Route]" +
-                    "FROM[trip].[dbo].[ToDO] where requestwho_email ='{0}'", email);
+                String query = string.Format("SELECT [AutoID]  ,[RequestTime]," +
+             "[RequestWHO_IP] ,[RequestWHO_email],[RequestWHO_name] ,[Request_DataTEXT] ,[Request_Data]  ,[isFix], [Output_Status]  ," +
+             "[Output_CompletedTime]  ,[Output_Data]  ,[Output_Path],[remark] ,[Output_Route]" +
+             "FROM[trip].[dbo].[ToDO] where requestwho_email ='{0}'", email);
+
 
                 using (SqlDataAdapter adapter = new SqlDataAdapter(query, con))
                 {
@@ -77,15 +78,16 @@ namespace triprouteservice
         }
 
         [WebMethod(Description = "경로 요청 입력")]        
-        public string requestTravelRoute(string ip, string email, string name, string place, string data)
+        public string requestTravelRoute(string ip, string email, string name, string place, string data,string isfix )
         {
             string requestwho_ip = checkInputData ( ip );
             string requestwho_email = checkInputData(email );
             string requestwho_name = checkInputData(name);
             string request_data = checkInputData(data);
             string request_place = checkInputData(place);
-            string _query = "INSERT INTO [ToDO] ( requestwho_ip, requestwho_email, requestwho_name,request_place, request_data) " +
-            "values ( @requestwho_ip, @requestwho_email, @requestwho_name, @request_place,  @request_data )";
+            string request_isfix = checkInputData(isfix); 
+            string _query = "INSERT INTO [ToDO] ( requestwho_ip, requestwho_email, requestwho_name,request_place, request_data, isfix) " +
+            "values ( @requestwho_ip, @requestwho_email, @requestwho_name, @request_place,  @request_data ,@isfix)";
             
             using (SqlConnection conn = new SqlConnection(conString))
             {
@@ -99,7 +101,8 @@ namespace triprouteservice
                     comm.Parameters.AddWithValue("@requestwho_name", requestwho_name);
                     comm.Parameters.AddWithValue("@request_place", request_place);
                     comm.Parameters.AddWithValue("@request_data", request_data);
-                     
+                    comm.Parameters.AddWithValue("@isfix", request_isfix);
+
                     try
                     {
                         conn.Open();
