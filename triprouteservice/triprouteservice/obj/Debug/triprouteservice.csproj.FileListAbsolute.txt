@@ -171,3 +171,4 @@ D:\githome\travel_route\triprouteservice\triprouteservice\obj\Debug\triprouteser
 D:\githome\travel_route\triprouteservice\triprouteservice\obj\Debug\triprouteservice.csproj.CopyComplete
 D:\githome\travel_route\triprouteservice\triprouteservice\obj\Debug\triprouteservice.dll
 D:\githome\travel_route\triprouteservice\triprouteservice\obj\Debug\triprouteservice.pdb
+C:\triphome\travle_webservice\triprouteservice\triprouteservice\obj\Debug\triprouteservice.csprojResolveAssemblyReference.cache
