@@ -43,7 +43,7 @@ namespace triprouteservice
 
                 String query = "SELECT [AutoID]  ,[RequestTime]," +
                 "[RequestWHO_IP] ,[RequestWHO_email],[RequestWHO_name],[Request_place] ,[Request_Data]  ,[IsFix], [Output_Status]  ," +
-                "[Output_CompletedTime]  ,[Output_Data]  ,[Output_Path],[remark] ,[Output_Route],[Request_DepartueTime]  ,[Output_TotalTime]" +
+                "[Output_CompletedTime]  ,[Output_Data]  ,[Output_Path],[remark] ,[Output_Route],[Request_DepartureTime]  ,[Output_TotalTime]" +
                 "FROM[trip].[dbo].[ToDO] ";
 
                 using (SqlDataAdapter adapter = new SqlDataAdapter(query, con))
@@ -65,8 +65,8 @@ namespace triprouteservice
 
                 String query = string.Format("SELECT [AutoID]  ,[RequestTime]," +
              "[RequestWHO_IP] ,[RequestWHO_email],[RequestWHO_name] ,[Request_DataTEXT] ,[Request_Data]  ,[isFix], [Output_Status]  ," +
-             //"[Output_CompletedTime]  ,[Output_Data]  ,[Output_Path],[remark] ,[Output_Route] ,[Request_DepartueTime]  ,[Output_TotalTime]" +
-             "[Output_CompletedTime]    ,[Output_Path],[Output_Route] ,[Request_DepartueTime]  ,[Output_TotalTime]" +
+             //"[Output_CompletedTime]  ,[Output_Data]  ,[Output_Path],[remark] ,[Output_Route] ,[Request_DepartureTime]  ,[Output_TotalTime]" +
+             "[Output_CompletedTime]    ,[Output_Path],[Output_Route] ,[Request_DepartureTime]  ,[Output_TotalTime]" +
              "FROM[trip].[dbo].[ToDO] where requestwho_email ='{0}'", email);
 
 
@@ -91,7 +91,7 @@ namespace triprouteservice
 
                 String query = string.Format("SELECT [AutoID]  ,[RequestTime]," +
                     "[RequestWHO_IP] ,[RequestWHO_email],[RequestWHO_name] ,[Request_DataTEXT] ,[Request_Data]  ,[Output_Status]  ," +
-                    "[Output_CompletedTime]  ,[Output_Data]  ,[Output_Path],[remark] ,[Output_Route] ,[Request_DepartueTime]  ,[Output_TotalTime] " +
+                    "[Output_CompletedTime]  ,[Output_Data]  ,[Output_Path],[remark] ,[Output_Route] ,[Request_DepartureTime]  ,[Output_TotalTime] " +
                     "FROM[trip].[dbo].[ToDO] where AutoID ='{0}'", id);
 
                 using (SqlDataAdapter adapter = new SqlDataAdapter(query, con))
@@ -105,6 +105,9 @@ namespace triprouteservice
         [WebMethod(Description = "경로 요청 입력")]        
         public string requestTravelRoute(string ip, string email, string name, string place, string data,string isfix, string departuretime)
         {
+            //형태 : ISO-8601 표준. -	예) 2013-05-19T18:31:22+00:00
+            if (departuretime == null || departuretime =="")
+                departuretime = DateTime.UtcNow.ToString("yyyy-MM-ddTHH\\:mm\\:ss.fffffffzzz");
             string requestwho_ip = checkInputData ( ip );
             string requestwho_email = checkInputData(email );
             string requestwho_name = checkInputData(name);
@@ -112,10 +115,10 @@ namespace triprouteservice
             string request_place = checkInputData(place);
             string request_isfix = checkInputData(isfix);
             string request_departuretime = checkInputData(departuretime);
+           
 
 
-
-        string _query = "INSERT INTO [ToDO] ( requestwho_ip, requestwho_email, requestwho_name,Request_DataTEXT, request_data, isfix,Request_DepartueTime  ) " +
+            string _query = "INSERT INTO [ToDO] ( requestwho_ip, requestwho_email, requestwho_name,Request_DataTEXT, request_data, isfix,Request_DepartureTime  ) " +
             "values ( @requestwho_ip, @requestwho_email, @requestwho_name, @Request_DataTEXT,  @request_data ,@isfix , @departuretime)";
             
             using (SqlConnection conn = new SqlConnection(conString))
